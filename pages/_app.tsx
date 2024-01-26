@@ -1,4 +1,5 @@
-import "../styles/globals.css";
+"use client";
+import "./globals.css";
 import type { AppProps } from "next/app";
 import type { Liff } from "@line/liff";
 import { useState, useEffect } from "react";

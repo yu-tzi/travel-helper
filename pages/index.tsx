@@ -1,12 +1,11 @@
 import type { Liff } from "@line/liff";
 import type { NextPage } from "next";
 import Head from "next/head";
-import styles from "../styles/Home.module.css";
 
-const Home: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
-  liff,
-  liffError
-}) => {
+const Home: NextPage<{
+  liff: Liff | null;
+  liffError: string | null;
+}> = ({ liff, liffError }) => {
   return (
     <div>
       <Head>
@@ -15,8 +14,7 @@ const Home: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={styles.main}>
-        <h1>create-liff-app</h1>
+      <main className="flex flex-col items-center p-5 gap-4">
         {liff && <p>LIFF init succeeded.</p>}
         {liffError && (
           <>
@@ -26,13 +24,28 @@ const Home: NextPage<{ liff: Liff | null; liffError: string | null }> = ({
             </p>
           </>
         )}
-        <a
-          href="https://developers.line.biz/ja/docs/liff/"
-          target="_blank"
-          rel="noreferrer"
-        >
-          LIFF Documentation
-        </a>
+        <div className="flex flex-col justify-center gap-2">
+          <button
+            className="bg-green-500 hover:bg-green-700 text-white font-sm py-2 px-4 rounded disabled:opacity-50"
+            onClick={() => {
+              if (!liff?.isLoggedIn()) {
+                liff?.login();
+              }
+            }}
+            disabled={liff?.isLoggedIn()}
+          >
+            {liff?.isLoggedIn() ? "Already LogIn" : "LINE login"}
+          </button>
+          <button
+            className="bg-blue-500 hover:bg-blue-700 text-white font-sm py-2 px-4 rounded"
+            onClick={async () => {
+              const accessToken = liff?.isLoggedIn() && liff?.getAccessToken();
+              // 把 token 傳給後端以確認使用者認證
+            }}
+          >
+            測試打 API
+          </button>
+        </div>
       </main>
     </div>
   );
