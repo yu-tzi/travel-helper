@@ -1,6 +1,7 @@
 import type { Liff } from "@line/liff";
 import type { NextPage } from "next";
 import Head from "next/head";
+import Welcome from "../component/welcome";
 
 const Home: NextPage<{
   liff: Liff | null;
@@ -9,43 +10,24 @@ const Home: NextPage<{
   return (
     <div>
       <Head>
-        <title>LIFF App</title>
+        <title>Travel helper - planner</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
-      <main className="flex flex-col items-center p-5 gap-4">
-        {liff && <p>LIFF init succeeded.</p>}
-        {liffError && (
-          <>
-            <p>LIFF init failed.</p>
-            <p>
-              <code>{liffError}</code>
-            </p>
-          </>
-        )}
-        <div className="flex flex-col justify-center gap-2">
+      <main>
+        {liff?.isLoggedIn() && !liffError ? (
           <button
-            className="bg-green-500 hover:bg-green-700 text-white font-sm py-2 px-4 rounded disabled:opacity-50"
-            onClick={() => {
-              if (!liff?.isLoggedIn()) {
-                liff?.login();
-              }
-            }}
-            disabled={liff?.isLoggedIn()}
-          >
-            {liff?.isLoggedIn() ? "Already LogIn" : "LINE login"}
-          </button>
-          <button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-sm py-2 px-4 rounded"
+            className="bg-gray-400 hover:bg-gray-200 text-white font-sm py-2 px-4 rounded w-40 m-auto"
             onClick={async () => {
-              const accessToken = liff?.isLoggedIn() && liff?.getAccessToken();
+              const accessToken = liff?.isLoggedIn() && liff?.getIDToken();
               // 把 token 傳給後端以確認使用者認證
             }}
           >
-            測試打 API
+            call get tours api
           </button>
-        </div>
+        ) : (
+          <Welcome liff={liff} />
+        )}
       </main>
     </div>
   );
