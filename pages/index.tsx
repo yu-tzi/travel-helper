@@ -62,8 +62,8 @@ const Home: NextPage<{
                 <div className="text-xs font-medium text-slate-400 mb-2">
                   JOURNEY
                 </div>
-                <div className="overflow-scroll h-[60vh] py-1 snap-y">
-                  <div className="relative">
+                <div className="overflow-scroll h-[60vh] py-1 snap-y bg-contain bg-opacity-80 bg-[url('/map.png')]">
+                  <div className="relative mx-1">
                     <div className="h-full w-1 bg-[#866ce7e9] absolute top-0 left-6"></div>
                     {formattedTours.map((tour) => {
                       return (
