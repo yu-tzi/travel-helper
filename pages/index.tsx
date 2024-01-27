@@ -90,7 +90,7 @@ const Home: NextPage<{
                             </div>
                           )}
                           <div
-                            className={`bg-white text-[#866ce7e9] border-2 border-neutral-200 w-48 h-18 rounded-md mb-3 flex flex-col justify-start pt-1.5 pb-2 px-2`}
+                            className={`bg-white text-[#866ce7e9] border-2 border-neutral-200 w-[calc(100%-55px)] h-18 rounded-md mb-3 flex flex-col justify-start pt-1.5 pb-2 px-2`}
                           >
                             <div
                               className="text-sm font-medium truncate flex flex-row items-center justify-between cursor-pointer"
@@ -121,7 +121,7 @@ const Home: NextPage<{
                               </div>
                             </div>
                             {selectBlock === tour.id && (
-                              <div className="mt-2">
+                              <div className="mt-2 flex flex-col gap-2.5">
                                 {tour.todo.length < 1 && (
                                   <div className="text-xs text-slate-500">
                                     還沒有待辦事項
@@ -131,22 +131,25 @@ const Home: NextPage<{
                                   return (
                                     <div
                                       key={item.id}
-                                      className="text-sm text-slate-500 flex flex-row items-start gap-1"
+                                      className="text-sm text-slate-500 flex flex-row items-start gap-1.5"
                                     >
                                       <input
                                         type={"checkbox"}
                                         id={item.id}
-                                        checked={item.checked}
-                                        className="mt-1"
+                                        //checked={item.checked}
+                                        className="mt-0.5"
                                       ></input>
-                                      <label htmlFor={item.id}>
+                                      <label
+                                        htmlFor={item.id}
+                                        className="flex-1"
+                                      >
                                         {item.name}
                                       </label>
                                     </div>
                                   );
                                 })}
                                 <button className="bg-[#866ce7e9] mt-2 rounded-md text-white text-xs p-1.5 w-full">
-                                  新增待辦事項
+                                  新增/編輯待辦事項
                                 </button>
                               </div>
                             )}
