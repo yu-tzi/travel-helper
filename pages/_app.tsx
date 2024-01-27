@@ -1,4 +1,5 @@
 "use client";
+
 import "./globals.css";
 import type { AppProps } from "next/app";
 import type { Liff } from "@line/liff";
