@@ -4,14 +4,21 @@ import type { Liff } from "@line/liff";
 import type { NextPage } from "next";
 import Head from "next/head";
 import { format, isBefore, isSameDay } from "date-fns";
-import { HiOutlineClock, HiOutlinePlusSm } from "react-icons/hi";
+import {
+  HiOutlineChevronDown,
+  HiOutlineClock,
+  HiOutlinePlusSm,
+} from "react-icons/hi";
 import tours from "../data/tours.json";
-import { useMemo } from "react";
+import { useMemo, useRef, useState } from "react";
 
 const Home: NextPage<{
   liff: Liff | null;
   liffError: string | null;
 }> = ({ liff, liffError }) => {
+  const [selectBlock, setSelectBlock] = useState("");
+  // TODO: when click, scroll into view
+  const showBlockRef = useRef<HTMLDivElement>(null);
   const formattedTours = useMemo(() => {
     let date = tours[0].timestamp;
     return tours.map((tour, index) => {
@@ -82,9 +89,25 @@ const Home: NextPage<{
                               </div>
                             </div>
                           )}
-                          <div className="bg-white text-[#866ce7e9] border-2 border-neutral-200 w-48 h-18 rounded-md mb-3 flex flex-col justify-start pt-1.5 pb-2 px-2">
-                            <div className="text-sm font-medium truncate">
+                          <div
+                            className={`bg-white text-[#866ce7e9] border-2 border-neutral-200 w-48 h-18 rounded-md mb-3 flex flex-col justify-start pt-1.5 pb-2 px-2`}
+                          >
+                            <div
+                              className="text-sm font-medium truncate flex flex-row items-center justify-between cursor-pointer"
+                              onClick={() => {
+                                if (selectBlock === tour.id) {
+                                  setSelectBlock("");
+                                } else {
+                                  setSelectBlock(tour.id);
+                                }
+                              }}
+                            >
                               {tour.name}
+                              <HiOutlineChevronDown
+                                className={`transition ease-in-out ${
+                                  selectBlock === tour.id && "rotate-180"
+                                }`}
+                              />
                             </div>
                             <div className="text-xs opacity-80">
                               {isBefore(new Date(tour.timestamp), new Date())
@@ -97,6 +120,36 @@ const Home: NextPage<{
                                 {format(new Date(tour.timestamp), "HH:mm")}
                               </div>
                             </div>
+                            {selectBlock === tour.id && (
+                              <div className="mt-2">
+                                {tour.todo.length < 1 && (
+                                  <div className="text-xs text-slate-500">
+                                    還沒有待辦事項
+                                  </div>
+                                )}
+                                {tour.todo.map((item) => {
+                                  return (
+                                    <div
+                                      key={item.id}
+                                      className="text-sm text-slate-500 flex flex-row items-start gap-1"
+                                    >
+                                      <input
+                                        type={"checkbox"}
+                                        id={item.id}
+                                        checked={item.checked}
+                                        className="mt-1"
+                                      ></input>
+                                      <label htmlFor={item.id}>
+                                        {item.name}
+                                      </label>
+                                    </div>
+                                  );
+                                })}
+                                <button className="bg-[#866ce7e9] mt-2 rounded-md text-white text-xs p-1.5 w-full">
+                                  新增待辦事項
+                                </button>
+                              </div>
+                            )}
                           </div>
                         </div>
                       );
