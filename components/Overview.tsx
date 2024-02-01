@@ -37,7 +37,7 @@ export const Overview = ({ liff }: { liff: Liff | null }) => {
   }) => {
     try {
       const response = await fetch(
-        `${process.env.SERVER_BASE_URL}api/v1/${path}`,
+        `https://${process.env.SERVER_BASE_URL}/api/v1/${path}`,
         {
           method: method,
           headers: {
