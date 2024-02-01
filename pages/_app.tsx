@@ -1,5 +1,6 @@
 "use client";
 
+import "dotenv/config";
 import "./globals.css";
 import type { AppProps } from "next/app";
 import type { Liff } from "@line/liff";
@@ -16,8 +17,9 @@ function MyApp({ Component, pageProps }: AppProps) {
       .then((liff) => liff.default)
       .then((liff) => {
         console.log("LIFF init...");
+        // @TODO: 找出為什麼這裡拿不到 process.env.LINE_LIFF_ID
         liff
-          .init({ liffId: process.env.NEXT_PUBLIC_LIFF_ID! })
+          .init({ liffId: "2003087799-X6VzprAm" })
           .then(() => {
             console.log("LIFF init succeeded.");
             setLiffObject(liff);
