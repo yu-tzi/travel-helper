@@ -37,7 +37,7 @@ export const Overview = ({ liff }: { liff: Liff | null }) => {
   }) => {
     try {
       const response = await fetch(
-        `https://travel-helper-server.onrender.com/api/v1/${path}`,
+        `${process.env.SERVER_BASE_URL}api/v1/${path}`,
         {
           method: method,
           headers: {
