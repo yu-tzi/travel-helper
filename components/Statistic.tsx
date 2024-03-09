@@ -8,7 +8,14 @@ import {
   Divider,
 } from "@chakra-ui/react";
 
-export const Statistic = () => {
+type StatisticResponse = {
+  avgDuration: number;
+  maxDuration: number;
+  minDuration: number;
+  todoCount: number;
+};
+
+export const Statistic = ({ data }: { data: StatisticResponse }) => {
   return (
     <Box border="1px" borderColor="gray.200" borderRadius="md">
       <StatGroup>
@@ -20,7 +27,7 @@ export const Statistic = () => {
           justifyContent="start"
         >
           <StatLabel>Total todos</StatLabel>
-          <StatNumber>0</StatNumber>
+          <StatNumber>{data.todoCount}</StatNumber>
           <StatHelpText>5/18-5/21</StatHelpText>
         </Stat>
         <Divider orientation="vertical" h={95} />
@@ -32,7 +39,7 @@ export const Statistic = () => {
           justifyContent="start"
         >
           <StatLabel>Average Duration</StatLabel>
-          <StatNumber>0</StatNumber>
+          <StatNumber>{Math.floor(data.avgDuration)}</StatNumber>
           <StatHelpText>5/18-5/21</StatHelpText>
         </Stat>
       </StatGroup>
