@@ -94,7 +94,7 @@ export const TagSet = ({
       priority: "優先度由小到大",
       "-priority": "優先度由大到小",
     };
-    if (sortingTarget !== "none") {
+    if (sortingTarget && sortingTarget !== "none") {
       return `${sortMap[sortingTarget]}`;
     }
     return "設定排列條件";
