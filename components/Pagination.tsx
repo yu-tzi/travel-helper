@@ -8,7 +8,7 @@ export const Pagination = () => {
         direction="row"
         align="center"
         width="50vh"
-        maxWidth="335px"
+        maxWidth="320px"
         backgroundColor={"white"}
         p={2}
       >

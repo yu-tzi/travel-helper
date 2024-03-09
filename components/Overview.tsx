@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Statistic } from "./Statistic";
 import { TagSet } from "./TagSet";
 import { Pagination } from "./Pagination";
+import { TourCards } from "./TourCards";
 
 export const Overview = ({ liff }: { liff: Liff | null }) => {
   const [accessToken, setAccessToken] = useState("");
@@ -17,6 +18,7 @@ export const Overview = ({ liff }: { liff: Liff | null }) => {
       <Statistic />
       <TagSet />
       <Pagination />
+      <TourCards />
     </>
   );
 };
