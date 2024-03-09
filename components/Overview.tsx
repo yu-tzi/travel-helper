@@ -1,7 +1,7 @@
 "use client";
 
 import { Liff } from "@line/liff";
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useMemo, useReducer, useState } from "react";
 import { Statistic } from "./Statistic";
 import { TagSet } from "./TagSet";
 import { Pagination } from "./Pagination";
@@ -91,6 +91,8 @@ export const Overview = ({ liff }: { liff: Liff | null }) => {
     todoCount: 0,
   });
   const [tours, setTours] = useState<TourResponse[] | []>([]);
+  // TODO: 用來算總頁數，之後要讓後端直接傳
+  const [toursCount, setToursCount] = useState(0);
   useEffect(() => {
     const accessToken = liff?.isLoggedIn() && liff?.getIDToken();
     setAccessToken(accessToken || "");
@@ -100,13 +102,18 @@ export const Overview = ({ liff }: { liff: Liff | null }) => {
       console.log(toursResponse);
       setStatistic(statsResponse);
       setTours(toursResponse);
+      setToursCount(toursResponse.length);
     };
     fetchData();
   }, [liff]);
   return (
     <>
       <Statistic data={statistic} />
-      <TagSet state={dataSettingState} dispatch={dispatchDataSetting} />
+      <TagSet
+        state={dataSettingState}
+        dispatch={dispatchDataSetting}
+        statistic={statistic}
+      />
       <Pagination />
       <TourCards />
     </>

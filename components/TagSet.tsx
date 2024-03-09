@@ -16,13 +16,17 @@ import {
   Portal,
   Select,
   VStack,
-  Input,
-  RangeSlider,
-  RangeSliderTrack,
-  RangeSliderFilledTrack,
-  RangeSliderThumb,
+  Slider,
+  SliderTrack,
+  SliderFilledTrack,
+  SliderThumb,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
 } from "@chakra-ui/react";
-import { Dispatch } from "react";
+import { Dispatch, useMemo } from "react";
 import { HiFilter, HiSortDescending } from "react-icons/hi";
 
 type DataSetting = {
@@ -33,13 +37,21 @@ type DataSetting = {
   currentPage?: number;
   countPerPage?: number;
 };
+type StatisticResponse = {
+  avgDuration: number;
+  maxDuration: number;
+  minDuration: number;
+  todoCount: number;
+};
 
 export const TagSet = ({
   state,
   dispatch,
+  statistic,
 }: {
   state: DataSetting;
   dispatch: Dispatch<Partial<DataSetting>>;
+  statistic: StatisticResponse;
 }) => {
   const {
     isOpen: isFilterOpen,
@@ -51,6 +63,13 @@ export const TagSet = ({
     onOpen: onSortOpen,
     onClose: onSortClose,
   } = useDisclosure();
+  const filterString = useMemo(() => {
+    const { filterInput, filterOperator, filterTarget } = state;
+    if (filterOperator !== "none" && filterTarget !== "none") {
+      return `${filterTarget} ${filterOperator} ${filterInput}`;
+    }
+    return "設定篩選條件";
+  }, [state]);
   return (
     <>
       <div className="flex flex-row gap-2 flex-wrap my-2">
@@ -58,12 +77,26 @@ export const TagSet = ({
           size="lg"
           colorScheme="cyan"
           cursor="pointer"
-          onClick={onFilterOpen}
+          onClick={() => {
+            onFilterOpen(),
+              dispatch({
+                filterTarget: "none",
+                filterOperator: "none",
+                filterInput: 0,
+              });
+          }}
         >
           <TagLeftIcon boxSize="12px" as={HiFilter} />
-          <TagLabel>設定篩選條件</TagLabel>
+          <TagLabel>{filterString}</TagLabel>
         </Tag>
-        <Tag size="lg" colorScheme="cyan" cursor="pointer" onClick={onSortOpen}>
+        <Tag
+          size="lg"
+          colorScheme="cyan"
+          cursor="pointer"
+          onClick={() => {
+            onSortOpen();
+          }}
+        >
           <TagLeftIcon boxSize="12px" as={HiSortDescending} />
           <TagLabel>設定排序條件</TagLabel>
         </Tag>
@@ -90,39 +123,98 @@ export const TagSet = ({
               spacing={4}
               align="stretch"
             >
-              <Select placeholder="尚未選擇篩選項目">
-                <option value="option1">日期</option>
-                <option value="option2">停留時間</option>
-                <option value="option3">優先度</option>
+              <Select
+                placeholder="尚未選擇篩選標的"
+                onChange={(e) => {
+                  const target = e.target.value;
+                  if (["duration", "priority"].includes(target)) {
+                    dispatch({
+                      filterTarget: target as "duration" | "priority",
+                      filterOperator: "none",
+                      filterInput: 0,
+                    });
+                  } else {
+                    dispatch({
+                      filterTarget: "none",
+                      filterOperator: "none",
+                      filterInput: 0,
+                    });
+                  }
+                }}
+              >
+                <option value="duration">停留時間</option>
+                <option value="priority">優先度</option>
               </Select>
-              <Select placeholder="尚未選擇 Operator">
-                <option value="option1">大於</option>
-                <option value="option2">大於等於</option>
-                <option value="option3">等於</option>
-                <option value="option3">小於等於</option>
-                <option value="option3">小於</option>
-              </Select>
-              <Input placeholder="Select Date" size="md" type="date" />
-              <VStack spacing={1}>
-                <Box
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="space-between"
-                ></Box>
-                <RangeSlider
-                  aria-label={["min", "max"]}
-                  onChangeEnd={(val) => console.log(val)}
-                  min={0}
-                  max={30}
-                  step={1}
+              {state.filterTarget && state.filterTarget !== "none" && (
+                <Select
+                  placeholder="尚未選擇篩選 operator"
+                  onChange={(e) => {
+                    const target = e.target.value;
+                    if (["gt", "gte", "equal", "lte", "lt"].includes(target)) {
+                      dispatch({
+                        filterInput: 0,
+                        filterOperator: target as
+                          | "gt"
+                          | "gte"
+                          | "equal"
+                          | "lte"
+                          | "lt",
+                      });
+                    } else {
+                      dispatch({ filterOperator: "none", filterInput: 0 });
+                    }
+                  }}
                 >
-                  <RangeSliderTrack>
-                    <RangeSliderFilledTrack />
-                  </RangeSliderTrack>
-                  <RangeSliderThumb index={0} />
-                  <RangeSliderThumb index={1} />
-                </RangeSlider>
-              </VStack>
+                  <option value="gt">大於</option>
+                  <option value="gte">大於等於</option>
+                  <option value="equal">等於</option>
+                  <option value="lte">小於等於</option>
+                  <option value="lt">小於</option>
+                </Select>
+              )}
+              {state.filterOperator &&
+                state.filterOperator !== "none" &&
+                state.filterTarget === "duration" && (
+                  <VStack spacing={1}>
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="space-between"
+                      w={"100%"}
+                    >
+                      <p>0</p>
+                      <p>{statistic.maxDuration}</p>
+                    </Box>
+                    <Slider
+                      onChangeEnd={(value) => dispatch({ filterInput: value })}
+                      aria-label="slider-ex-1"
+                      defaultValue={state.filterInput}
+                      max={statistic.maxDuration}
+                    >
+                      <SliderTrack>
+                        <SliderFilledTrack />
+                      </SliderTrack>
+                      <SliderThumb />
+                    </Slider>
+                  </VStack>
+                )}
+              {state.filterOperator &&
+                state.filterOperator !== "none" &&
+                state.filterTarget === "priority" && (
+                  <NumberInput
+                    max={5}
+                    min={0}
+                    onChange={(value) =>
+                      dispatch({ filterInput: parseInt(value) })
+                    }
+                  >
+                    <NumberInputField />
+                    <NumberInputStepper>
+                      <NumberIncrementStepper />
+                      <NumberDecrementStepper />
+                    </NumberInputStepper>
+                  </NumberInput>
+                )}
             </VStack>
           </ModalBody>
           <ModalFooter>
@@ -130,7 +222,10 @@ export const TagSet = ({
               colorScheme="blue"
               width={"150px"}
               size={"md"}
-              onClick={onFilterClose}
+              disabled={true}
+              onClick={() => {
+                onFilterClose(), console.log(state);
+              }}
             >
               套用
             </Button>
