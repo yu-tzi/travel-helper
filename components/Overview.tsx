@@ -164,14 +164,21 @@ export const Overview = ({ liff }: { liff: Liff | null }) => {
       </Modal>
       <Modal isOpen={isSortOpen} onClose={onSortClose}>
         <ModalContent maxWidth="375px" width="50vh">
-          <ModalHeader>Modal Title</ModalHeader>
+          <ModalHeader>設定排序條件</ModalHeader>
           <ModalCloseButton />
-          <ModalBody></ModalBody>
+          <ModalBody>
+            <Select placeholder="尚未選擇排序項目">
+              <option value="option1">日期（新到舊）</option>
+              <option value="option2">停留時間（多到少）</option>
+              <option value="option2">停留時間（少到多）</option>
+              <option value="option3">優先度（高到低）</option>
+              <option value="option3">優先度（低到高）</option>
+            </Select>
+          </ModalBody>
           <ModalFooter>
             <Button colorScheme="blue" mr={3} onClick={onSortClose}>
-              Close
+              儲存
             </Button>
-            <Button variant="ghost">Secondary Action</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
