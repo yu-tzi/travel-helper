@@ -65,10 +65,39 @@ export const TagSet = ({
   } = useDisclosure();
   const filterString = useMemo(() => {
     const { filterInput, filterOperator, filterTarget } = state;
-    if (filterOperator !== "none" && filterTarget !== "none") {
-      return `${filterTarget} ${filterOperator} ${filterInput}`;
+    const targetMap = {
+      duration: "停留時間",
+      priority: "優先度",
+    };
+    const operatorMap = {
+      gt: "大於",
+      gte: "大於等於",
+      equal: "等於",
+      lte: "小於等於",
+      lt: "小於",
+    };
+    if (
+      filterOperator &&
+      filterOperator !== "none" &&
+      filterTarget &&
+      filterTarget !== "none"
+    ) {
+      return `${targetMap[filterTarget]} ${operatorMap[filterOperator]} ${filterInput}`;
     }
     return "設定篩選條件";
+  }, [state]);
+  const sortingString = useMemo(() => {
+    const { sortingTarget } = state;
+    const sortMap = {
+      duration: "停留時間由小到大",
+      "-duration": "停留時間由大到小",
+      priority: "優先度由小到大",
+      "-priority": "優先度由大到小",
+    };
+    if (sortingTarget !== "none") {
+      return `${sortMap[sortingTarget]}`;
+    }
+    return "設定排列條件";
   }, [state]);
   return (
     <>
@@ -95,10 +124,11 @@ export const TagSet = ({
           cursor="pointer"
           onClick={() => {
             onSortOpen();
+            dispatch({ sortingTarget: "none" });
           }}
         >
           <TagLeftIcon boxSize="12px" as={HiSortDescending} />
-          <TagLabel>設定排序條件</TagLabel>
+          <TagLabel>{sortingString}</TagLabel>
         </Tag>
       </div>
       {(isFilterOpen || isSortOpen) && (
@@ -237,12 +267,33 @@ export const TagSet = ({
           <ModalHeader>設定排序條件</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Select placeholder="尚未選擇排序項目">
-              <option value="option1">日期（新到舊）</option>
-              <option value="option2">停留時間（多到少）</option>
-              <option value="option2">停留時間（少到多）</option>
-              <option value="option3">優先度（高到低）</option>
-              <option value="option3">優先度（低到高）</option>
+            <Select
+              placeholder="尚未選擇排序項目"
+              onChange={(e) => {
+                const target = e.target.value;
+                if (
+                  ["duration", "-duration", "priority", "-priority"].includes(
+                    target
+                  )
+                ) {
+                  dispatch({
+                    sortingTarget: target as
+                      | "duration"
+                      | "-duration"
+                      | "priority"
+                      | "-priority",
+                  });
+                } else {
+                  dispatch({
+                    sortingTarget: "none",
+                  });
+                }
+              }}
+            >
+              <option value="-duration">停留時間（多到少）</option>
+              <option value="duration">停留時間（少到多）</option>
+              <option value="-priority">優先度（高到低）</option>
+              <option value="priority">優先度（低到高）</option>
             </Select>
           </ModalBody>
           <ModalFooter>
