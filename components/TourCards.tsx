@@ -8,20 +8,17 @@ import {
   Card,
   CardHeader,
   CardBody,
-  CardFooter,
   Stack,
   StackDivider,
   Box,
   Heading,
-  Text,
   Checkbox,
-  CheckboxGroup,
 } from "@chakra-ui/react";
 
 export const TourCards = () => {
   return (
-    <Tabs isFitted variant="soft-rounded" colorScheme="green">
-      <TabList mb="1em">
+    <Tabs isFitted variant="soft-rounded" colorScheme="green" marginTop={5}>
+      <TabList marginBottom={1}>
         <Tab>未來的行程</Tab>
         <Tab>過去的行程</Tab>
       </TabList>
