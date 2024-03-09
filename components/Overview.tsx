@@ -7,13 +7,24 @@ import { TagSet } from "./TagSet";
 import { Pagination } from "./Pagination";
 import { TourCards } from "./TourCards";
 
-type dataSetting = {
-  filterTarget: "duration" | "priority" | "none";
-  filterOperator: "gt" | "gte" | "equal" | "lte" | "lt" | "none";
-  filterInput: number;
-  sortingTarget: "duration" | "-duration" | "priority" | "-priority" | "none";
-  currentPage: number;
-  countPerPage: number;
+type TourResponse = {
+  _id: string;
+  date: string;
+  duration: number;
+  priority: number;
+  name: string;
+  todo: any[];
+  formattedDate: string;
+  id: string;
+};
+
+type DataSetting = {
+  filterTarget?: "duration" | "priority" | "none";
+  filterOperator?: "gt" | "gte" | "equal" | "lte" | "lt" | "none";
+  filterInput?: number;
+  sortingTarget?: "duration" | "-duration" | "priority" | "-priority" | "none";
+  currentPage?: number;
+  countPerPage?: number;
 };
 
 type StatisticResponse = {
@@ -27,6 +38,23 @@ const reducer = <T,>(state: T, action: Partial<T>) => {
   return { ...state, ...action };
 };
 
+const fetchTourData = async (
+  props: DataSetting = {}
+): Promise<TourResponse[]> => {
+  const options = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer YOUR_ACCESS_TOKEN",
+    },
+  };
+  const res = await fetch(
+    "https://travel-helper-server.onrender.com/api/v1/tours/",
+    options
+  );
+  const { data } = await res.json();
+  return data.tours;
+};
 const fetchStatsData = async (): Promise<StatisticResponse> => {
   const options = {
     method: "GET",
@@ -46,7 +74,7 @@ const fetchStatsData = async (): Promise<StatisticResponse> => {
 export const Overview = ({ liff }: { liff: Liff | null }) => {
   const [accessToken, setAccessToken] = useState("");
   const [dataSettingState, dispatchDataSetting] = useReducer(
-    reducer<dataSetting>,
+    reducer<DataSetting>,
     {
       filterTarget: "none",
       filterOperator: "none",
@@ -62,19 +90,23 @@ export const Overview = ({ liff }: { liff: Liff | null }) => {
     minDuration: 0,
     todoCount: 0,
   });
+  const [tours, setTours] = useState<TourResponse[] | []>([]);
   useEffect(() => {
     const accessToken = liff?.isLoggedIn() && liff?.getIDToken();
     setAccessToken(accessToken || "");
     const fetchData = async () => {
-      const response = await fetchStatsData();
-      setStatistic(response);
+      const statsResponse = await fetchStatsData();
+      const toursResponse = await fetchTourData();
+      console.log(toursResponse);
+      setStatistic(statsResponse);
+      setTours(toursResponse);
     };
     fetchData();
   }, [liff]);
   return (
     <>
       <Statistic data={statistic} />
-      <TagSet />
+      <TagSet state={dataSettingState} dispatch={dispatchDataSetting} />
       <Pagination />
       <TourCards />
     </>

@@ -22,9 +22,25 @@ import {
   RangeSliderFilledTrack,
   RangeSliderThumb,
 } from "@chakra-ui/react";
+import { Dispatch } from "react";
 import { HiFilter, HiSortDescending } from "react-icons/hi";
 
-export const TagSet = () => {
+type DataSetting = {
+  filterTarget?: "duration" | "priority" | "none";
+  filterOperator?: "gt" | "gte" | "equal" | "lte" | "lt" | "none";
+  filterInput?: number;
+  sortingTarget?: "duration" | "-duration" | "priority" | "-priority" | "none";
+  currentPage?: number;
+  countPerPage?: number;
+};
+
+export const TagSet = ({
+  state,
+  dispatch,
+}: {
+  state: DataSetting;
+  dispatch: Dispatch<Partial<DataSetting>>;
+}) => {
   const {
     isOpen: isFilterOpen,
     onOpen: onFilterOpen,
